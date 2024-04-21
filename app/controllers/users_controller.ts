@@ -3,6 +3,8 @@ import { signUpValidator } from '../validators/auth.js'
 import User from '../models/user.js'
 import { generateOTP } from '../utils/otp.js'
 import hash from '@adonisjs/core/services/hash'
+import { getHtmlOtpEmailContent } from '../utils/mailcontent.js'
+import { sendEmail } from '../utils/Mailer.js'
 export default class UsersController {
     public async signUp({ request, response }: HttpContext) {
         // step 2 check if email already exist than return if exist
@@ -26,6 +28,13 @@ export default class UsersController {
         const user = await User.create({ emailAddress: emailAddress, loginOtp: hashedOTP });
         await user.save()
 
+        const emailContent = getHtmlOtpEmailContent(otp);
+        await sendEmail(
+            {
+                htmlContent: emailContent
+                , subject: "Tasks-Sync Your One-Time Password (OTP)",
+                recipientEmail: user.emailAddress
+            })
 
         return response.send({
             status: 200,
