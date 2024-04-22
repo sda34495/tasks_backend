@@ -17,7 +17,7 @@ interface EmailDetail {
     textContent?: string
 }
 export async function sendEmail(emailsDetails: EmailDetail) {
-    const sentFrom = new Sender(env.get('SENDER_MAIL'), emailsDetails.senderName || "Danish Ali");
+    const sentFrom = new Sender(env.get('SENDER_MAIL'), emailsDetails.senderName || "Tasks Sync");
     const recipient = new Recipient(emailsDetails.recipientEmail, emailsDetails.recipientName || "User")
     const recipients = [recipient];
 
