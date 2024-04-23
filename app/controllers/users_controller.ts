@@ -1,5 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { resendOtpValidator, signUpValidator, verifyOtpValidator } from '../validators/auth.js'
+import { loginValidator, resendOtpValidator, signUpValidator, verifyOtpValidator } from '../validators/auth.js'
 import User from '../models/user.js'
 import { generateOTP } from '../utils/otp.js'
 import hash from '@adonisjs/core/services/hash'
@@ -58,12 +58,7 @@ export default class UsersController {
             });
         }
 
-        if (user.isVerified) {
-            return response.json({
-                status: 400,
-                message: "User Already Verified."
-            });
-        }
+      
 
 
         const isOtpCorrect = await hash.verify(user.loginOtp, otp);
@@ -144,7 +139,40 @@ export default class UsersController {
             {
                 htmlContent: emailContent
                 , subject: "Tasks-Sync Your One-Time Password (OTP)",
-                recipientEmail: user.emailAddress
+                recipientEmail: user.emailAddress,
+                recipientName: user.firstName + " " + user.lastName
             })
     }
+
+
+
+     async login({ request, response }: HttpContext) {
+        const data = request.body()
+        const payload = await loginValidator.validate(data)
+
+        const { emailAddress } = payload
+
+        const user = await User.findBy("email_address", emailAddress);
+        if (!user) return response.send({
+            status: 400,
+            message: "No User Found With this Email."
+        })
+
+
+
+        const otp = generateOTP();
+        const hashedOTP = await hash.make(otp);
+
+        user.loginOtp = hashedOTP;
+        await user.save();
+
+
+        await this.sendOtpByEmail(otp, user);
+
+        return response.send({
+            status: 200,
+            message: "Verification Otp has been sent on Email."
+        })
+    }
+
 }

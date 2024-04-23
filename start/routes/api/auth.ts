@@ -7,4 +7,5 @@ router.group(() => {
     router.post('/signup', [UsersController, 'signUp'])
     router.post('/verify-otp', [UsersController, 'verifyOtp'])
     router.post('/resend-otp', [UsersController, 'resendOtp'])
-}).prefix('auth')
+    router.post('/login', [UsersController, 'login'])
+}).prefix('api/auth')
