@@ -1,5 +1,6 @@
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import env from '#start/env'
+import { EmailDetail } from "../interfaces/EmailDetail.js";
 
 const mailerSend = new MailerSend({
     apiKey: env.get('MAIL_API_KEY'),
@@ -7,15 +8,6 @@ const mailerSend = new MailerSend({
 
 
 
-interface EmailDetail {
-    senderEmail?: string,
-    senderName?: string,
-    recipientEmail: string
-    recipientName?: string
-    subject: string,
-    htmlContent: string,
-    textContent?: string
-}
 export async function sendEmail(emailsDetails: EmailDetail) {
     const sentFrom = new Sender(env.get('SENDER_MAIL'), emailsDetails.senderName || "Danish Ali");
     const recipient = new Recipient(emailsDetails.recipientEmail, emailsDetails.recipientName || "User")
