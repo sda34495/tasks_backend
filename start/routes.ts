@@ -8,12 +8,4 @@
 */
 
 import router from '@adonisjs/core/services/router'
-import UsersController from '../app/controllers/users_controller.js'
-
-router.get('/', async () => {
-  return {
-    hello: 'world',
-  }
-})
-
-router.post('auth/signup', [UsersController, 'signUp'])
+import './routes/api/auth.ts'

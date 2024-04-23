@@ -32,5 +32,8 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   // Mailer
   MAIL_API_KEY: Env.schema.string(),
-  SENDER_MAIL: Env.schema.string()
+  SENDER_MAIL: Env.schema.string(),
+
+  // JWT 
+  JWT_PRIVATE_KEY: Env.schema.string()
 })
