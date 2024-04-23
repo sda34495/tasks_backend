@@ -1,5 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { signUpValidator, verifyOtpValidator } from '../validators/auth.js'
+import { resendOtpValidator, signUpValidator, verifyOtpValidator } from '../validators/auth.js'
 import User from '../models/user.js'
 import { generateOTP } from '../utils/otp.js'
 import hash from '@adonisjs/core/services/hash'
@@ -19,20 +19,14 @@ export default class UsersController {
             message: "User already Exist."
         })
 
+
         const otp = generateOTP();
         const hashedOTP = await hash.make(otp);
-
 
         const user = await User.create({ firstName, lastName, emailAddress: emailAddress, loginOtp: hashedOTP });
         await user.save()
 
-        const emailContent = getHtmlOtpEmailContent(otp);
-        await sendEmail(
-            {
-                htmlContent: emailContent
-                , subject: "Tasks-Sync Your One-Time Password (OTP)",
-                recipientEmail: user.emailAddress
-            })
+        await this.sendOtpByEmail(otp, user);
 
         return response.send({
             status: 200,
@@ -101,5 +95,56 @@ export default class UsersController {
 
 
 
+    }
+
+    async resendOtp({ request, response }: HttpContext) {
+        const data = request.body();
+        const payload = await resendOtpValidator.validate(data);
+        const { emailAddress } = payload
+        const user = await User.findBy("email_address", emailAddress);
+
+
+        if (!user) {
+            return response.send({
+                status: 400,
+                message: "No user found with this Email."
+            })
+        }
+
+        if (user?.isVerified) {
+            return response.send({
+                status: 400,
+                message: "User is already Verified."
+            })
+        }
+
+
+        const otp = generateOTP();
+        const hashedOTP = await hash.make(otp);
+
+
+
+        user.loginOtp = hashedOTP;
+        await user.save()
+
+        await this.sendOtpByEmail(otp, user);
+
+
+        return response.send({
+            status: 200,
+            message: "Verification Otp has been sent on Email."
+        })
+
+
+    }
+
+    private async sendOtpByEmail(otp: string, user: User) {
+        const emailContent = getHtmlOtpEmailContent(otp);
+        await sendEmail(
+            {
+                htmlContent: emailContent
+                , subject: "Tasks-Sync Your One-Time Password (OTP)",
+                recipientEmail: user.emailAddress
+            })
     }
 }

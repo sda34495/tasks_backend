@@ -14,3 +14,9 @@ export const verifyOtpValidator = vine.compile(
         otp: vine.string()
     })
 )
+
+export const resendOtpValidator = vine.compile(
+    vine.object({
+        emailAddress: vine.string().email(),
+    })
+)
