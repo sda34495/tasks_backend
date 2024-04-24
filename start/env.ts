@@ -35,5 +35,12 @@ export default await Env.create(new URL('../', import.meta.url), {
   SENDER_MAIL: Env.schema.string(),
 
   // JWT 
-  JWT_PRIVATE_KEY: Env.schema.string()
+  JWT_PRIVATE_KEY: Env.schema.string(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring session package
+  |----------------------------------------------------------
+  */
+  SESSION_DRIVER: Env.schema.enum(['cookie', 'memory'] as const)
 })
