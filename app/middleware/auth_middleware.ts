@@ -8,7 +8,7 @@ export default class AuthMiddleware {
      * Middleware logic goes here (before the next call)
      */
 
-    console.log("inside...")
+    
     const token = request.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) return response.json({
@@ -33,6 +33,8 @@ export default class AuthMiddleware {
      * Call next method in the pipeline and return its output
      */
     await next()
+
+
   }
 }
 

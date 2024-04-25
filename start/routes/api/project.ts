@@ -12,4 +12,4 @@ import router from '@adonisjs/core/services/router'
 router.group(() => {
     router.post('/create-project', [ProjectsController, 'createProject'])
 
-}).prefix('api/projects')
+}).prefix('api/projects').use(middleware.authentication())
