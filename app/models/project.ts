@@ -1,7 +1,8 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
 import User from './user.js'
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import Phase from './phase.js'
 
 export default class Project extends BaseModel {
   @column({ isPrimary: true })
@@ -30,9 +31,15 @@ export default class Project extends BaseModel {
 
   @column()
   declare ownerId: number
-  
+
   @column()
   declare isDeleted: boolean
+
+  @hasMany(() => Phase, {
+    foreignKey: 'projectId'
+  })
+  declare phases: HasMany<typeof Phase>
+
 
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>

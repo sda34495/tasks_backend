@@ -36,6 +36,7 @@ export default class User extends BaseModel {
   })
   declare projects: HasMany<typeof Project>
 
+  
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

@@ -64,8 +64,7 @@ export default class ProjectsController {
 
         const data = request.body();
         const { projectId, ...body }: any = await editProjectValidator.validate(data);
-        console.log(body)
-
+    
         const queryResponse = await Project.query().where('id', projectId).where('ownerId', userId).where('isDeleted', false);
         const project = queryResponse[0];
 
@@ -79,6 +78,12 @@ export default class ProjectsController {
 
 
     }
+
+    
+
+
+
+
 
 
 
