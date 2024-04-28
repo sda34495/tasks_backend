@@ -30,6 +30,9 @@ export default class Project extends BaseModel {
 
   @column()
   declare ownerId: number
+  
+  @column()
+  declare isDeleted: boolean
 
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
