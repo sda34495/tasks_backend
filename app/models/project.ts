@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
 import User from './user.js'
-import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import Phase from './phase.js'
 
 export default class Project extends BaseModel {
@@ -35,12 +35,26 @@ export default class Project extends BaseModel {
   @column()
   declare isDeleted: boolean
 
+
+  @manyToMany(() => User, {
+    localKey: 'id',
+    pivotForeignKey: 'project_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'assignee_id',
+    pivotTable: 'project_assignees',
+    pivotTimestamps: true
+  })
+  public collaborators!: ManyToMany<typeof User>
+
+
   @hasMany(() => Phase, {
     foreignKey: 'projectId'
   })
   declare phases: HasMany<typeof Phase>
 
-
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
+
+
+ 
 }
