@@ -58,7 +58,7 @@ export default class UsersController {
             });
         }
 
-      
+
 
 
         const isOtpCorrect = await hash.verify(user.loginOtp, otp);
@@ -146,7 +146,7 @@ export default class UsersController {
 
 
 
-     async login({ request, response }: HttpContext) {
+    async login({ request, response }: HttpContext) {
         const data = request.body()
         const payload = await loginValidator.validate(data)
 
@@ -171,6 +171,7 @@ export default class UsersController {
 
         return response.send({
             status: 200,
+            otp: otp,
             message: "Verification Otp has been sent on Email."
         })
     }

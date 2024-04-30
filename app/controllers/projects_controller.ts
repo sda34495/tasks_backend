@@ -26,9 +26,14 @@ export default class ProjectsController {
         const payload = await session.get("payload");
         const { userId } = payload;
 
-        const projects = await Project.query().preload('collaborators');
+        const projects = await Project.query()
+            .where('ownerId', userId) // Projects owned by the user
+            .orWhereHas('collaborators', (builder) => {
+                builder.where('id', userId); // Projects assigned to the user
+            })
+            .preload('owner')
 
-        return response.send({ status: 200, data: projects })
+        return response.send({ status: 200, data: projects, message: "" })
 
 
 
@@ -75,7 +80,7 @@ export default class ProjectsController {
         await project.merge({ ...body }).save()
 
 
-        return response.json({ status: 200, message: "Saved Successfully", data: project })
+        return response.json({ status: 200, message: "Details Saved Successfully", data: project })
 
 
     }
@@ -114,6 +119,34 @@ export default class ProjectsController {
 
 
     }
+
+
+    async getProjectDetail({ response, session, request }: HttpContext) {
+
+        const payload = await session.get("payload");
+        const { userId } = payload;
+        const { projectId } = request.qs()
+        if (!projectId) return response.json({ status: 400, message: "Please Attach projectId as query String" })
+
+        // const projects = await Project.query().where('ownerId', userId).preload('owner');
+        const projects = await Project.query()
+            .where('id', projectId) // Projects owned by the user
+            .orWhereHas('collaborators', (builder) => {
+                builder.where('id', userId); // Projects assigned to the user
+            })
+            .preload('owner')
+            .preload('phases', (query) => {
+                query.preload('tasks'); // Preload tasks within phases
+            })
+
+        return response.send({ status: 200, data: projects, message: "" })
+
+
+
+    }
+
+
+
 
 
 

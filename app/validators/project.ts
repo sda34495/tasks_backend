@@ -30,7 +30,17 @@ export const deleteProjectValidator = vine.compile(
 export const assignProjectValidator = vine.compile(
     vine.object({
         projectId: vine.number(),
-        collaboratorId:vine.number(),
+        collaboratorId: vine.number(),
 
+    })
+)
+
+export const createTaskValidator = vine.compile(
+    vine.object({
+        title: vine.string(),
+        projectId:vine.number(),
+        phaseId: vine.number(),
+        description: vine.string().optional(),
+        dueDate: vine.string().optional(),
     })
 )

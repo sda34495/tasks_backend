@@ -11,5 +11,6 @@ import router from '@adonisjs/core/services/router'
 import './routes/api/auth.ts'
 import './routes/api/project.ts'
 import './routes/api/phase.ts'
+import './routes/api/task.ts'
 
 

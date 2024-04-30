@@ -3,6 +3,7 @@ import { BaseModel, belongsTo, column, hasMany, manyToMany } from '@adonisjs/luc
 import User from './user.js'
 import type { BelongsTo, HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import Phase from './phase.js'
+import Task from './task.js'
 
 export default class Project extends BaseModel {
   @column({ isPrimary: true })
@@ -32,7 +33,7 @@ export default class Project extends BaseModel {
   @column()
   declare ownerId: number
 
-  @column()
+  @column({ serializeAs: null })
   declare isDeleted: boolean
 
 
@@ -52,9 +53,16 @@ export default class Project extends BaseModel {
   })
   declare phases: HasMany<typeof Phase>
 
-  @belongsTo(() => User)
-  declare user: BelongsTo<typeof User>
+  @hasMany(() => Task, {
+    foreignKey: 'projectId'
+  })
+  declare tasks: HasMany<typeof Task>
+
+  @belongsTo(() => User, {
+    foreignKey: 'ownerId'
+  })
+  declare owner: BelongsTo<typeof User>
 
 
- 
+
 }
