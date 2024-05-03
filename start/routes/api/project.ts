@@ -12,5 +12,7 @@ router.group(() => {
     router.post('/delete-project', [ProjectsController, 'deleteProject'])
     router.post('/edit-project', [ProjectsController, 'editProject'])
     router.post('/assign-project', [ProjectsController, 'assignProject'])
+    router.get('/get-invitation-detail', [ProjectsController, 'getInvitationDetail'])
+    router.post('/send-invite', [ProjectsController, 'inviteToProject'])
 
 }).prefix('api/projects').use(middleware.authentication())

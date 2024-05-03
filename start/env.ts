@@ -37,6 +37,9 @@ export default await Env.create(new URL('../', import.meta.url), {
   // JWT 
   JWT_PRIVATE_KEY: Env.schema.string(),
 
+  // FRONT CLIENT 
+  CLIENT_ADDR: Env.schema.string(),
+
   /*
   |----------------------------------------------------------
   | Variables for configuring session package

@@ -35,12 +35,12 @@ export const assignProjectValidator = vine.compile(
     })
 )
 
-export const createTaskValidator = vine.compile(
+export const inviteProjectValidator = vine.compile(
     vine.object({
-        title: vine.string(),
-        projectId:vine.number(),
-        phaseId: vine.number(),
-        description: vine.string().optional(),
-        dueDate: vine.string().optional(),
+        projectId: vine.number(),
+        recipientEmailAddress: vine.string().email()
+
     })
 )
+
+
