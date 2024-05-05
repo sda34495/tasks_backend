@@ -162,7 +162,7 @@ export default class ProjectsController {
 
         const token = await generateAuthToken(user.id, user.emailAddress);
 
-        const newInvitee = await Invitation.create({ inviter: userId, token: token, projectId: projectId, recipientId: user.id })
+        const newInvitee = await Invitation.create({ inviterId: userId, token: token, projectId: projectId, recipientId: user.id })
         await newInvitee.save()
 
 
@@ -179,7 +179,7 @@ export default class ProjectsController {
 
 
 
-        return response.send({ status: 200, message: "Project Created Successfully.", data: newInvitee })
+        return response.send({ status: 200, message: "Project Created Successfully.", data: { link: inviteLink } })
 
 
 

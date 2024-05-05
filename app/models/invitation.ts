@@ -12,7 +12,7 @@ export default class Invitation extends BaseModel {
   declare recipientId: number
 
   @column()
-  declare inviter: number
+  declare inviterId: number
 
   @column()
   declare token: string
