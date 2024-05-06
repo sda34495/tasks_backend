@@ -3,11 +3,12 @@ import ProjectAssignee from '#models/project_assignee';
 import User from '#models/user'
 import { assignProjectValidator, createProjectValidator, deleteProjectValidator, editProjectValidator, inviteProjectValidator } from '#validators/project';
 import type { HttpContext } from '@adonisjs/core/http'
-import { generateAuthToken } from '../utils/jwt.js';
+import { generateAuthToken, verifyAuthToken } from '../utils/jwt.js';
 import Invitation from '#models/invitation';
 import env from '#start/env';
 import { getInviteLinkContent } from '../utils/mailcontent.js';
 import { sendEmail } from '../utils/Mailer.js';
+import { InviteStatus } from '../interfaces/constants/InviteStatus.js';
 
 export default class ProjectsController {
 
@@ -96,30 +97,51 @@ export default class ProjectsController {
 
         const payload = await session.get('payload');
         const { userId } = payload
-        const data = request.body();
-        const { projectId, collaboratorId } = await assignProjectValidator.validate(data);
 
 
-        const queryResponse = await Project.query().where('id', projectId).where('ownerId', userId).where('isDeleted', false);
+
+        const { token } = request.qs()
+
+        const decodePayload: any = await verifyAuthToken(token)
+
+       
+        if (decodePayload.userId != userId) return response.send({ status: 403, message: 'Unauthorized Access' })
+
+        const invitationQueryResponse = await Invitation.query().where('token', token).where('status', InviteStatus.PENDING);
+
+        const invitation = invitationQueryResponse[0]
+        if (!invitation) return response.send({ status: 400, message: 'No Invite Found.' })
+
+
+
+
+
+
+
+
+        const queryResponse = await Project.query().where('id', invitation.projectId).where('ownerId', invitation.inviterId).where('isDeleted', false);
         const project = queryResponse[0];
 
         if (!project) return response.send({ status: 400, message: "No Project found." })
 
-        const user = await User.findBy('id', collaboratorId);
+        const user = await User.findBy('id', invitation.recipientId);
         if (!user) return response.send({ status: 400, message: "No User found." })
 
 
 
-        const queryResponseForCollaborator = await ProjectAssignee.query().where('assigneeId', collaboratorId).where('projectId', projectId)
+        const queryResponseForCollaborator = await ProjectAssignee.query().where('assigneeId', invitation.recipientId).where('projectId', invitation.projectId)
         const collaborator = queryResponseForCollaborator[0];
 
         if (collaborator) return response.send({ status: 400, message: "Already Assigned." })
 
 
-        const newCollaborator = await ProjectAssignee.create({ assigneeId: collaboratorId, projectId: projectId })
+        const newCollaborator = await ProjectAssignee.create({ assigneeId: invitation.recipientId, projectId: invitation.projectId })
         await newCollaborator.save()
 
-        return response.send({ status: 200, message: "User Have Been Assigned." })
+        invitation.status = InviteStatus.ACCEPTED
+        invitation.save()
+
+        return response.send({ status: 200, message: "Project Assigned Successfully.", data: {} })
 
 
 
@@ -192,7 +214,9 @@ export default class ProjectsController {
         const { token } = request.qs()
 
         const invitation = await Invitation.findBy('token', token);
+        console.log(token)
         if (!invitation) return response.send({ status: 400, message: "Not found." })
+
 
         const queryResponse = await Project.query().where('id', invitation.projectId).preload('owner');
 
