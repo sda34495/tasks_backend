@@ -11,6 +11,7 @@ export default class UsersController {
         const data = request.body()
         const payload = await signUpValidator.validate(data)
 
+
         const { emailAddress, firstName, lastName } = payload
 
         const userWithThisEmail = await User.findBy("email_address", emailAddress);
