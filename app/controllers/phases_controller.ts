@@ -10,7 +10,7 @@ export default class PhasesController {
         const body = await createPhaseValidator.validate(data);
 
 
-        const phase = await Phase.create({ title: body.title, projectId: body.projectId })
+        const phase = await Phase.create({ title: body.title, projectId: body.projectId, colorCode: this.generateLightColorHash() })
 
         await phase.save()
 
@@ -18,4 +18,18 @@ export default class PhasesController {
 
 
     }
+
+    private generateLightColorHash() {
+        const red = Math.floor(Math.random() * 255);
+        const green = Math.floor(Math.random() * 255);
+        const blue = Math.floor(Math.random() * 255);
+        const hexRed = red.toString(16).padStart(2, '0');
+        const hexGreen = green.toString(16).padStart(2, '0');
+        const hexBlue = blue.toString(16).padStart(2, '0');
+        return `#${hexRed}${hexGreen}${hexBlue}`;
+    }
+
+
+
 }
+

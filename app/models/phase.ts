@@ -14,6 +14,9 @@ export default class Phase extends BaseModel {
   declare title: string
 
   @column({})
+  declare colorCode: string
+
+  @column({})
   declare projectId: number
 
   @belongsTo(() => Project)

@@ -104,7 +104,7 @@ export default class ProjectsController {
 
         const decodePayload: any = await verifyAuthToken(token)
 
-       
+
         if (decodePayload.userId != userId) return response.send({ status: 403, message: 'Unauthorized Access' })
 
         const invitationQueryResponse = await Invitation.query().where('token', token).where('status', InviteStatus.PENDING);
@@ -161,7 +161,7 @@ export default class ProjectsController {
             .preload('owner')
             .preload('phases', (query) => {
                 query.preload('tasks'); // Preload tasks within phases
-            })
+            }).preload('collaborators')
 
         return response.send({ status: 200, data: projects[0], message: "" })
 
