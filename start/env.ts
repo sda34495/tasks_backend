@@ -39,6 +39,7 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   // FRONT CLIENT 
   CLIENT_ADDR: Env.schema.string(),
+  HOST_ADDR: Env.schema.string(),
 
   /*
   |----------------------------------------------------------
