@@ -14,4 +14,4 @@ router.group(() => {
 
 router.group(() => {
     router.post('/upload-profile-picture', [UsersController, 'uploadProfilePicture'])
-}).prefix('api/profile').middleware(middleware.authentication())
+}).prefix('api/profile').middleware(middleware.authentication)
