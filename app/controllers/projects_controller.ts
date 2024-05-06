@@ -1,8 +1,13 @@
 import Project from '#models/project';
 import ProjectAssignee from '#models/project_assignee';
 import User from '#models/user'
-import { assignProjectValidator, createProjectValidator, deleteProjectValidator, editProjectValidator } from '#validators/project';
+import { assignProjectValidator, createProjectValidator, deleteProjectValidator, editProjectValidator, inviteProjectValidator } from '#validators/project';
 import type { HttpContext } from '@adonisjs/core/http'
+import { generateAuthToken } from '../utils/jwt.js';
+import Invitation from '#models/invitation';
+import env from '#start/env';
+import { getInviteLinkContent } from '../utils/mailcontent.js';
+import { sendEmail } from '../utils/Mailer.js';
 
 export default class ProjectsController {
 
@@ -27,7 +32,7 @@ export default class ProjectsController {
         const { userId } = payload;
 
         const projects = await Project.query()
-            .where('ownerId', userId) // Projects owned by the user
+            .where('ownerId', userId).where('isDeleted', false)// Projects owned by the user
             .orWhereHas('collaborators', (builder) => {
                 builder.where('id', userId); // Projects assigned to the user
             })
@@ -123,24 +128,77 @@ export default class ProjectsController {
 
     async getProjectDetail({ response, session, request }: HttpContext) {
 
+
         const payload = await session.get("payload");
         const { userId } = payload;
-        const { projectId } = request.qs()
-        if (!projectId) return response.json({ status: 400, message: "Please Attach projectId as query String" })
+        const { project_id } = request.qs()
+        if (!project_id) return response.json({ status: 400, message: "Please Attach project_id as query String" })
 
-        // const projects = await Project.query().where('ownerId', userId).preload('owner');
         const projects = await Project.query()
-            .where('id', projectId) // Projects owned by the user
-            .orWhereHas('collaborators', (builder) => {
-                builder.where('id', userId); // Projects assigned to the user
-            })
+            .where('id', project_id) // Projects owned by the user
             .preload('owner')
             .preload('phases', (query) => {
                 query.preload('tasks'); // Preload tasks within phases
             })
 
-        return response.send({ status: 200, data: projects, message: "" })
+        return response.send({ status: 200, data: projects[0], message: "" })
 
+
+
+    }
+
+
+    async inviteToProject({ session, response, request }: HttpContext) {
+
+        console.log("Up and Running..")
+        const payload = await session.get('payload');
+        const { userId } = payload
+        const data = request.body();
+        const { recipientEmailAddress, projectId } = await inviteProjectValidator.validate(data);
+
+        const user = await User.findBy('emailAddress', recipientEmailAddress);
+        if (!user) return response.json({ status: 400, message: "No User Found With this Email." })
+
+
+        const token = await generateAuthToken(user.id, user.emailAddress);
+
+        const newInvitee = await Invitation.create({ inviterId: userId, token: token, projectId: projectId, recipientId: user.id })
+        await newInvitee.save()
+
+
+        const inviteLink = `${env.get("CLIENT_ADDR")}/invite/${token}`;
+
+        const content = getInviteLinkContent(inviteLink);
+        await sendEmail({
+            htmlContent: content,
+            recipientEmail: user.emailAddress,
+            subject: 'Project Invitation',
+            recipientName: user.lastName,
+            senderName: 'Task Sync'
+        })
+
+
+
+        return response.send({ status: 200, message: "Project Created Successfully.", data: { link: inviteLink } })
+
+
+
+
+    }
+
+
+    async getInvitationDetail({ response, request }: HttpContext) {
+
+        const { token } = request.qs()
+
+        const invitation = await Invitation.findBy('token', token);
+        if (!invitation) return response.send({ status: 400, message: "Not found." })
+
+        const queryResponse = await Project.query().where('id', invitation.projectId).preload('owner');
+
+        const project = queryResponse[0]
+
+        return response.send({ status: 200, message: "Detail Found", data: { projectTitle: project.title, inviterName: project.owner.firstName + project.owner.lastName } })
 
 
     }

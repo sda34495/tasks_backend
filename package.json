@@ -59,11 +59,14 @@
     "@adonisjs/mail": "^9.2.1",
     "@adonisjs/session": "^7.4.0",
     "@vinejs/vine": "^2.0.0",
+    "form-data": "^4.0.0",
     "jsonwebtoken": "^9.0.2",
     "luxon": "^3.4.4",
     "mailersend": "^2.2.0",
+    "mailgun.js": "^10.2.1",
     "mysql2": "^3.9.6",
-    "reflect-metadata": "^0.2.2"
+    "reflect-metadata": "^0.2.2",
+    "ts-mailgun": "^0.5.1"
   },
   "eslintConfig": {
     "extends": "@adonisjs/eslint-config/app"

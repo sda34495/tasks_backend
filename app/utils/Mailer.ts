@@ -28,3 +28,4 @@ export async function sendEmail(emailsDetails: EmailDetail) {
         console.error("Error sending email:", error);
     }
 }
+
