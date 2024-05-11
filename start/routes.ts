@@ -12,6 +12,7 @@ import './routes/api/auth.ts'
 import './routes/api/project.ts'
 import './routes/api/phase.ts'
 import './routes/api/task.ts'
+import './routes/api/profile.ts'
 
 import { sep, normalize } from 'node:path'
 import app from '@adonisjs/core/services/app'

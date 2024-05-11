@@ -18,17 +18,17 @@ export default class PhasesController {
 
 
     }
-
     private generateLightColorHash() {
-        const red = Math.floor(Math.random() * 255);
-        const green = Math.floor(Math.random() * 255);
-        const blue = Math.floor(Math.random() * 255);
+        const baseValue = 180; // Adjust this value to control lightness (higher = lighter)
+        const range = 75; // Adjust this value to control color variation (lower = lighter)
+        const red = Math.floor(Math.random() * range) + baseValue;
+        const green = Math.floor(Math.random() * range) + baseValue;
+        const blue = Math.floor(Math.random() * range) + baseValue;
         const hexRed = red.toString(16).padStart(2, '0');
         const hexGreen = green.toString(16).padStart(2, '0');
         const hexBlue = blue.toString(16).padStart(2, '0');
         return `#${hexRed}${hexGreen}${hexBlue}`;
     }
-
 
 
 }

@@ -11,6 +11,8 @@ export const createTaskValidator = vine.compile(
         phaseId: vine.number(),
         description: vine.string().optional(),
         dueDate: vine.string().optional(),
+        priority: vine.enum(TaskPriority).optional(),
+        assignees: vine.array(vine.number()).optional()
     })
 );
 
@@ -21,10 +23,28 @@ export const editTaskStatusValidator = vine.compile(
         status: vine.enum(TaskStatus),
     })
 );
+export const editTaskValidator = vine.compile(
+    vine.object({
+        taskId: vine.number(),
+        projectId: vine.number(),
+        title: vine.string().optional(),
+        description: vine.string().optional(),
+        dueDate: vine.string().optional(),
+    })
+);
 
 export const editTaskPriorityValidator = vine.compile(
     vine.object({
         taskId: vine.number(),
         priority: vine.enum(TaskPriority),
+    })
+);
+
+export const removeOrAddAsssigneeValidator = vine.compile(
+    vine.object({
+        taskId: vine.number(),
+        projectId: vine.number(),
+        assigneeId: vine.number(),
+        status: vine.boolean()
     })
 );

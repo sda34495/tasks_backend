@@ -6,9 +6,6 @@ import hash from '@adonisjs/core/services/hash'
 import { getHtmlOtpEmailContent } from '../utils/mailcontent.js'
 import { sendEmail } from '../utils/Mailer.js'
 import { generateAuthToken } from '../utils/jwt.js'
-import app from '@adonisjs/core/services/app'
-import env from '#start/env'
-import { randomUUID } from 'crypto'
 export default class UsersController {
     public async signUp({ request, response }: HttpContext) {
         const data = request.body()
@@ -181,36 +178,6 @@ export default class UsersController {
     }
 
 
-    async uploadProfilePicture({ request, response, session }: HttpContext) {
-        console.log("Hitted..")
-
-        const payload = await session.get("payload");
-        const avatar = request.file('avatar')
-
-        if (!avatar) return response.json({ status: 400, message: 'Failed..' });
-
-        if (!avatar.isValid) {
-            return response.send({
-                status: 400,
-                errors: avatar.errors[0]
-            })
-        }
-
-        const user = await User.findBy('id', payload.userId);
-        if (!user) return response.send({
-            status: 400,
-            message: 'No User Found.'
-        })
-
-        await avatar.move(app.makePath('uploads'), { name: randomUUID() + avatar.clientName.replace(' ', '') })
-        if (!avatar.filePath) return;
-
-        user.avatar = env.get('HOST_ADDR') + avatar.clientName;
-        await user.save()
-
-        return response.send({ status: 200, message: 'Profile Uploaded Successfully.' })
-
-    }
 
 
 

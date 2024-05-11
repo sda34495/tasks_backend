@@ -156,6 +156,7 @@ export default class ProjectsController {
         const { project_id } = request.qs()
         if (!project_id) return response.json({ status: 400, message: "Please Attach project_id as query String" })
 
+
         const projects = await Project.query()
             .where('id', project_id) // Projects owned by the user
             .preload('owner')
@@ -163,7 +164,11 @@ export default class ProjectsController {
                 query.preload('tasks'); // Preload tasks within phases
             }).preload('collaborators')
 
-        return response.send({ status: 200, data: projects[0], message: "" })
+        let project = projects[0]
+        project.collaborators.push(project.owner)
+        return response.send({ status: 200, data: project, message: "" })
+
+
 
 
 
@@ -172,7 +177,6 @@ export default class ProjectsController {
 
     async inviteToProject({ session, response, request }: HttpContext) {
 
-        console.log("Up and Running..")
         const payload = await session.get('payload');
         const { userId } = payload
         const data = request.body();
