@@ -41,6 +41,11 @@ export default await Env.create(new URL('../', import.meta.url), {
   CLIENT_ADDR: Env.schema.string(),
   HOST_ADDR: Env.schema.string(),
 
+
+  CLOUD_NAME: Env.schema.string(),
+  CLOUD_API_KEY: Env.schema.string(),
+  API_SECRET: Env.schema.string(),
+
   /*
   |----------------------------------------------------------
   | Variables for configuring session package

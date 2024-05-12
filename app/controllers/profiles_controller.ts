@@ -5,6 +5,7 @@ import env from "#start/env";
 import { HttpContext } from "@adonisjs/core/http";
 import app from "@adonisjs/core/services/app";
 import { randomUUID } from "crypto";
+import bucket from "../utils/bucket.js";
 
 export default class ProfilesController {
     async uploadProfilePicture({ request, response, session }: HttpContext) {
@@ -28,11 +29,23 @@ export default class ProfilesController {
             message: 'No User Found.'
         })
 
-        const fileName = randomUUID() + avatar.clientName.replace(' ', '')
-        await avatar.move(app.makePath('uploads'), { name: fileName })
-        if (!avatar.filePath) return;
+        // const fileName = randomUUID() + avatar.clientName.replace(' ', '')
 
-        user.avatar = env.get('HOST_ADDR') + fileName;
+
+        // await avatar.move(app.makePath('uploads'), { name: fileName })
+        // if (!avatar.filePath) return;
+
+        // user.avatar = env.get('HOST_ADDR') + fileName;
+        // await user.save()
+        if (!avatar.tmpPath) return;
+
+        const result = await bucket.uploader.upload(avatar.tmpPath, {
+            folder: 'profile_pictures', // Optional folder in Cloudinary
+            use_filename: true
+        });
+
+        // Update user avatar URL
+        user.avatar = result.secure_url;
         await user.save()
 
         return response.send({ status: 200, message: 'Profile Uploaded Successfully.' })
