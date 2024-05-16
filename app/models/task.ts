@@ -36,6 +36,13 @@ export default class Task extends BaseModel {
   @column()
   declare dueDate: DateTime
 
+
+  @column()
+  declare isDeleted: boolean
+
+  @column()
+  declare deletedBy: number
+
   @belongsTo(() => Phase, {
     foreignKey: 'phaseId'
   })

@@ -48,3 +48,9 @@ export const removeOrAddAsssigneeValidator = vine.compile(
         status: vine.boolean()
     })
 );
+
+export const deleteTaskValidator = vine.compile(
+    vine.object({
+        taskId: vine.number(),
+    })
+);

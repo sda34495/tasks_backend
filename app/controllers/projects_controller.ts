@@ -161,11 +161,17 @@ export default class ProjectsController {
             .where('id', project_id) // Projects owned by the user
             .preload('owner')
             .preload('phases', (query) => {
-                query.preload('tasks'); // Preload tasks within phases
+                query.preload('tasks', (query) => {
+                    query.where('is_deleted', false)
+                }) // Preload tasks within phases
             }).preload('collaborators')
 
+
         let project = projects[0]
-        project.collaborators.push(project.owner)
+        if (!project) return;
+        const owner = await User.findBy('id', project.ownerId)
+        if (!owner) return;
+        project.collaborators.push(owner)
         return response.send({ status: 200, data: project, message: "" })
 
 

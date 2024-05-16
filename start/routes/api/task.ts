@@ -12,6 +12,7 @@ router.group(() => {
     router.post('/edit-task-priority', [TasksController, 'editTaskPriority'])
     router.get('/task-detail', [TasksController, 'getTaskDetail'])
     router.post('/assign-add-or-remove', [TasksController, 'addOrRemoveAssignee'])
+    router.post('/delete-task', [TasksController, 'deleteTask'])
 
 
 }).prefix('api/tasks').use(middleware.authentication())

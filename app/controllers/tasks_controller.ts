@@ -1,5 +1,5 @@
 import Task from '#models/task';
-import { createTaskValidator, editTaskPriorityValidator, editTaskStatusValidator, editTaskValidator, removeOrAddAsssigneeValidator } from '#validators/task';
+import { createTaskValidator, deleteTaskValidator, editTaskPriorityValidator, editTaskStatusValidator, editTaskValidator, removeOrAddAsssigneeValidator } from '#validators/task';
 import type { HttpContext } from '@adonisjs/core/http'
 import { TaskStatus } from '../interfaces/constants/TaskStatus.js';
 import TaskAssignee from '#models/task_assignee';
@@ -130,6 +130,31 @@ export default class TasksController {
         await taskAssignee.save()
 
         return response.send({ status: 200, message: 'Task Edited Successfully.' })
+    }
+
+
+    async deleteTask({ session, response, request }: HttpContext) {
+        const payload = await session.get("payload");
+        const { userId } = payload;
+
+        const data = request.body();
+        const { taskId } = await deleteTaskValidator.validate(data);
+
+
+
+        const queryResponse = await Task.query().where('id', taskId).where('isDeleted', false);
+        const task = queryResponse[0];
+
+        if (!task) return response.send({ status: 400, message: "No Project found." })
+
+        task.isDeleted = true;
+        task.deletedBy = userId
+
+        await task.save()
+
+        return response.send({ status: 200, message: "Task deleted Successfully." });
+
+
     }
 
 
