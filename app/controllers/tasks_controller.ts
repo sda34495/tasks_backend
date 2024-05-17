@@ -10,9 +10,9 @@ export default class TasksController {
         const payload = await session.get('payload');
         const { userId } = payload
         const data = request.body();
-        const { phaseId, projectId, assignees, ...body } = await createTaskValidator.validate(data);
-
-        const task = await Task.create({ ownerId: userId, ...body, phaseId, projectId, status: TaskStatus.NOT_STARTED, dueDate: body.dueDate });
+        const { phaseId, projectId, assignees, status, ...body } = await createTaskValidator.validate(data);
+        const taskStatus = status ? status : TaskStatus.NOT_STARTED
+        const task = await Task.create({ ownerId: userId, ...body, phaseId, projectId, status: taskStatus, dueDate: body.dueDate });
         await task.save()
 
         if (assignees && assignees?.length > 0) {

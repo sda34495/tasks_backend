@@ -211,7 +211,7 @@ export default class ProjectsController {
 
 
 
-        return response.send({ status: 200, message: "Project Created Successfully.", data: { link: inviteLink } })
+        return response.send({ status: 200, message: "Invitation Sent Successfully.", data: { link: inviteLink } })
 
 
 
