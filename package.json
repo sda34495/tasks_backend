@@ -67,7 +67,8 @@
     "mailgun.js": "^10.2.1",
     "mysql2": "^3.9.6",
     "reflect-metadata": "^0.2.2",
-    "ts-mailgun": "^0.5.1"
+    "ts-mailgun": "^0.5.1",
+    "ts-node": "^10.0.0"
   },
   "eslintConfig": {
     "extends": "@adonisjs/eslint-config/app"
