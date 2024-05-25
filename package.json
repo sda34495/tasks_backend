@@ -5,7 +5,7 @@
   "type": "module",
   "license": "UNLICENSED",
   "scripts": {
-    "build": "node ace build --prod --ignore-ts-errors flag",
+    "build": "node ace build --ignore-ts-errors",
     "start": "node ace serve --watch",
     "start:prod": "node ./build/server.js",
     "test": "node ace test",
