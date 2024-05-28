@@ -153,7 +153,8 @@ export default class ProjectsController {
 
         const payload = await session.get("payload");
         const { userId } = payload;
-        const { project_id } = request.qs()
+        const { project_id, ...filters } = request.qs()
+        const { priority, status } = filters
         if (!project_id) return response.json({ status: 400, message: "Please Attach project_id as query String" })
 
 
@@ -163,6 +164,14 @@ export default class ProjectsController {
             .preload('phases', (query) => {
                 query.preload('tasks', (query) => {
                     query.where('is_deleted', false)
+
+                    if (priority) {
+                        query.where('priority', priority);
+                    }
+                    // Apply status filter if provided
+                    if (status) {
+                        query.where('status', status);
+                    }
                 }) // Preload tasks within phases
             }).preload('collaborators')
 
