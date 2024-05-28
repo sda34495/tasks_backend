@@ -5,9 +5,9 @@
   "type": "module",
   "license": "UNLICENSED",
   "scripts": {
-    "start": "node bin/server.js",
-    "build": "node ace build",
-    "dev": "node ace serve --watch",
+    "build": "node ace build --ignore-ts-errors",
+    "start": "node ace serve --watch",
+    "start:prod": "node ./build/server.js",
     "test": "node ace test",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -67,7 +67,8 @@
     "mailgun.js": "^10.2.1",
     "mysql2": "^3.9.6",
     "reflect-metadata": "^0.2.2",
-    "ts-mailgun": "^0.5.1"
+    "ts-mailgun": "^0.5.1",
+    "ts-node": "^10.0.0"
   },
   "eslintConfig": {
     "extends": "@adonisjs/eslint-config/app"
